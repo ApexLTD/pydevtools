@@ -235,13 +235,12 @@ def test_should_create_many(resource: RestResource) -> None:
 
 
 def test_should_persist_many(resource: RestResource) -> None:
-    many_apples = [
-        dict(apple)
-        for apple in resource.create_many()
+    many_apples = list(
+        resource.create_many()
         .from_data({"name": "Golden", "color": "Golden"})
         .and_data({"name": "Ambrosia", "color": "Red"})
         .unpack_many()
-    ]
+    )
 
     (
         resource.read_all()
