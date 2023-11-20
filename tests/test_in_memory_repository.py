@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 import pytest
 from faker import Faker
 
-from pydevtools.error import DoesNotExistError, ExistsError, Field
+from pydevtools.error import DoesNotExistError, ExistsError
 from pydevtools.repository import InMemoryRepository
 
 
@@ -20,7 +20,7 @@ class _Company:
         return self.code == other.code
 
     def exists(self, with_id: UUID) -> ExistsError:
-        return ExistsError(with_id, duplicate=Field("code", self.code))
+        return ExistsError(with_id).and_duplicate(code=self.code)
 
 
 def test_should_not_read_unknown() -> None:
@@ -62,7 +62,7 @@ def test_should_not_duplicate_unique_field(faker: Faker) -> None:
         repository.create(duplicate)
 
     assert cm.value.id == company.id
-    assert cm.value.duplicate == Field("code", company.code)
+    assert str(cm.value.duplicates) == f"code<{company.code}>"
 
 
 def test_should_list(faker: Faker) -> None:
