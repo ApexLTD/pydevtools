@@ -7,6 +7,9 @@ from pydevtools.error import DoesNotExistError, ExistsError
 class _Item(Protocol):
     id: Any
 
+    def exists(self, with_id: Any) -> ExistsError:
+        pass
+
 
 ItemT = TypeVar("ItemT", bound=_Item)
 
@@ -22,7 +25,7 @@ class InMemoryRepository(Generic[ItemT]):
     def _ensure_does_not_exist(self, item: ItemT) -> None:
         for existing in self.items.values():
             if item == existing:
-                raise ExistsError(existing.id)
+                raise item.exists(with_id=existing.id)
 
     def read(self, item_id: Any) -> ItemT:
         try:

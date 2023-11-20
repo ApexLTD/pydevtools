@@ -19,6 +19,9 @@ class _Company:
 
         return self.code == other.code
 
+    def exists(self, with_id: UUID) -> ExistsError:
+        return ExistsError(with_id)
+
 
 def test_should_not_read_unknown() -> None:
     unknown_id = uuid4()

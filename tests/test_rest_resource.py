@@ -31,6 +31,9 @@ class Apple:
 
     id: UUID = field(default_factory=uuid4)
 
+    def exists(self, with_id: UUID) -> ExistsError:
+        return ExistsError(with_id)
+
     def __eq__(self, other: object) -> bool:
         assert isinstance(other, Apple), f"Cannot compare to {type(other)}"
 
