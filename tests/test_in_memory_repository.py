@@ -14,14 +14,6 @@ class _Company:
     name: str
     code: str
 
-    def __eq__(self, other: object) -> bool:
-        assert isinstance(other, _Company), f"Cannot compare to {type(other)}"
-
-        return self.code == other.code
-
-    def exists(self, with_id: UUID) -> ExistsError:
-        return ExistsError(with_id).and_duplicate(code=self.code)
-
 
 def test_should_not_read_unknown() -> None:
     unknown_id = uuid4()

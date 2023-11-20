@@ -33,9 +33,6 @@ class ExistsError(Exception):
 
     duplicates: _Duplicates = field(default_factory=_Duplicates)
 
-    def and_duplicate(self, **fields: Any) -> Self:
-        return self.with_duplicate(**fields)
-
     def with_duplicate(self, **fields: Any) -> Self:
         for key, value in fields.items():
             self.duplicates[key] = value

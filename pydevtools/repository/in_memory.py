@@ -4,11 +4,8 @@ from typing import Any, Generic, Iterator, Protocol, Self, TypeVar
 from pydevtools.error import DoesNotExistError, ExistsError
 
 
-class _Item(Protocol):  # pragma: no cover
+class _Item(Protocol):
     id: Any
-
-    def exists(self, with_id: Any) -> ExistsError:
-        pass
 
 
 ItemT = TypeVar("ItemT", bound=_Item)
