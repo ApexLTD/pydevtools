@@ -8,19 +8,19 @@ from typing import Any, Self
 class ExistsError(Exception):
     id: Any
 
-    duplicates: dict[str, Any] = field(default_factory=dict)
+    _duplicates: dict[str, Any] = field(init=False, default_factory=dict)
 
     def __str__(self) -> str:
-        return ",".join([f"{k}<{v}>" for k, v in self.duplicates.items()])
+        return ",".join([f"{k}<{v}>" for k, v in self._duplicates.items()])
 
     def with_duplicate(self, **fields: Any) -> Self:
         for key, value in fields.items():
-            self.duplicates[key] = value
+            self._duplicates[key] = value
 
         return self
 
     def fire(self) -> None:
-        if self.duplicates:
+        if self._duplicates:
             raise self
 
 
