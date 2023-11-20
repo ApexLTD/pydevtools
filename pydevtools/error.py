@@ -5,19 +5,13 @@ from typing import Any, Self
 
 
 @dataclass
-class _Duplicates(dict[str, Any]):
-    def __str__(self) -> str:
-        return ",".join([f"{k}<{v}>" for k, v in self.items()])
-
-
-@dataclass
 class ExistsError(Exception):
     id: Any
 
-    duplicates: _Duplicates = field(default_factory=_Duplicates)
+    duplicates: dict[str, Any] = field(default_factory=dict)
 
     def __str__(self) -> str:
-        return str(self.duplicates)
+        return ",".join([f"{k}<{v}>" for k, v in self.duplicates.items()])
 
     def with_duplicate(self, **fields: Any) -> Self:
         for key, value in fields.items():
