@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from starlette.testclient import TestClient
 
-from pydevtools.error import DoesNotExistError, ExistsError
+from pydevtools.error import DoesNotExistError, ExistsError, Field
 from pydevtools.fastapi import (
     BadRequest,
     NoData,
@@ -32,7 +32,7 @@ class Apple:
     id: UUID = field(default_factory=uuid4)
 
     def exists(self, with_id: UUID) -> ExistsError:
-        return ExistsError(with_id)
+        return ExistsError(with_id, duplicate=Field("name", self.name))
 
     def __eq__(self, other: object) -> bool:
         assert isinstance(other, Apple), f"Cannot compare to {type(other)}"
@@ -80,7 +80,7 @@ def create(request: AppleCreateRequest) -> ResourceCreated | ResourceExists:
         apples.create(apple)
     except ExistsError as e:
         return ResourceExists(
-            f"An apple with the name<{apple.name}> already exists.",
+            f"An apple with the {e.duplicate} already exists.",
             apple={"id": str(e.id)},
         )
 
@@ -99,7 +99,7 @@ def create_many(requests: AppleCreateManyRequest) -> ResourceCreated | ResourceE
             apples.create(apple)
         except ExistsError as e:
             return ResourceExists(
-                f"An apple with the name<{apple.name}> already exists.",
+                f"An apple with the {e.duplicate} already exists.",
                 apple={"id": str(e.id)},
             )
 
