@@ -5,26 +5,9 @@ from typing import Any, Self
 
 
 @dataclass
-class _Duplicates:
-    fields: list[_Duplicate] = field(default_factory=list)
-
-    def __setitem__(self, key: str, value: Any) -> None:
-        self.fields.append(_Duplicate(key, value))
-
+class _Duplicates(dict[str, Any]):
     def __str__(self) -> str:
-        return ",".join([str(f) for f in self.fields])
-
-    def __bool__(self) -> bool:
-        return bool(self.fields)
-
-
-@dataclass
-class _Duplicate:
-    name: str
-    value: Any
-
-    def __str__(self) -> str:
-        return f"{self.name}<{self.value}>"
+        return ",".join([f"{k}<{v}>" for k, v in self.items()])
 
 
 @dataclass
