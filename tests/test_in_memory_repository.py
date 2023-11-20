@@ -43,7 +43,7 @@ def test_should_not_duplicate(faker: Faker) -> None:
         repository.create(duplicate)
 
     assert cm.value.id == company.id
-    assert str(cm.value.duplicates) == f"code<{company.code}>"
+    assert str(cm.value) == f"code<{company.code}>"
 
 
 def test_should_list(faker: Faker) -> None:

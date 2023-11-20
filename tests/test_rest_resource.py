@@ -72,7 +72,7 @@ def create(request: AppleCreateRequest) -> ResourceCreated | ResourceExists:
         apples.create(apple)
     except ExistsError as e:
         return ResourceExists(
-            f"An apple with the {e.duplicates} already exists.",
+            f"An apple with the {e} already exists.",
             apple={"id": str(e.id)},
         )
 
@@ -91,7 +91,7 @@ def create_many(requests: AppleCreateManyRequest) -> ResourceCreated | ResourceE
             apples.create(apple)
         except ExistsError as e:
             return ResourceExists(
-                f"An apple with the {e.duplicates} already exists.",
+                f"An apple with the {e} already exists.",
                 apple={"id": str(e.id)},
             )
 
