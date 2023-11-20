@@ -10,14 +10,14 @@ class ExistsError(Exception):
 
     _duplicates: dict[str, Any] = field(init=False, default_factory=dict)
 
-    def __str__(self) -> str:
-        return ",".join([f"{k}<{v}>" for k, v in self._duplicates.items()])
-
     def with_duplicate(self, **fields: Any) -> Self:
         for key, value in fields.items():
             self._duplicates[key] = value
 
         return self
+
+    def __str__(self) -> str:
+        return ",".join([f"{k}<{v}>" for k, v in self._duplicates.items()])
 
     def fire(self) -> None:
         if self._duplicates:
