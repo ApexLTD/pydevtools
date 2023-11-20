@@ -41,18 +41,7 @@ def test_should_persist(faker: Faker) -> None:
     assert persisted == partner
 
 
-def test_should_not_duplicate_id(faker: Faker) -> None:
-    company = _Company(id=uuid4(), name=faker.company(), code=faker.ein())
-    repository = InMemoryRepository[_Company]()
-    repository.create(company)
-
-    with pytest.raises(ExistsError) as cm:
-        repository.create(company)
-
-    assert cm.value.id == company.id
-
-
-def test_should_not_duplicate_unique_field(faker: Faker) -> None:
+def test_should_not_duplicate(faker: Faker) -> None:
     company = _Company(id=uuid4(), name=faker.company(), code=faker.ein())
     repository = InMemoryRepository[_Company]()
     repository.create(company)
