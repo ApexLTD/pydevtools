@@ -41,7 +41,7 @@ class Apple:
 
 
 app = FastAPI()
-apples = InMemoryRepository[Apple]()
+apples = InMemoryRepository[Apple]().with_unique("name")
 
 
 class AppleItem(BaseModel):

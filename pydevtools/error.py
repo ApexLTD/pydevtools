@@ -14,6 +14,9 @@ class _Duplicates:
     def __str__(self) -> str:
         return ",".join([str(f) for f in self.fields])
 
+    def __bool__(self) -> bool:
+        return bool(self.fields)
+
 
 @dataclass
 class _Duplicate:
@@ -38,6 +41,10 @@ class ExistsError(Exception):
             self.duplicates[key] = value
 
         return self
+
+    def fire(self) -> None:
+        if self.duplicates:
+            raise self
 
 
 @dataclass
