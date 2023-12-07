@@ -167,7 +167,7 @@ def test_should_not_read_unknown(resource: RestResource) -> None:
 
 
 def test_should_not_list_anything_when_none_exist(resource: RestResource) -> None:
-    resource.read_all().ensure().success().with_code(200).and_data(apples=[], count=0)
+    resource.read_all().ensure().success().with_code(200).and_list()
 
 
 def test_should_create(resource: RestResource) -> None:
@@ -235,13 +235,7 @@ def test_should_create_many(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_data(
-            apples=[
-                dict(many_apples[0].push(id=ANY)),
-                dict(many_apples[1].push(id=ANY)),
-            ],
-            count=2,
-        )
+        .and_list(many_apples[0].push(id=ANY), many_apples[1].push(id=ANY))
     )
 
 
@@ -253,13 +247,7 @@ def test_should_persist_many(resource: RestResource) -> None:
         .unpack_many()
     )
 
-    (
-        resource.read_all()
-        .ensure()
-        .success()
-        .with_code(200)
-        .and_data(apples=many_apples, count=2)
-    )
+    resource.read_all().ensure().success().with_code(200).and_list(*many_apples)
 
 
 def test_should_not_duplicate_many(resource: RestResource) -> None:

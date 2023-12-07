@@ -186,6 +186,14 @@ class RestResponse:
     def and_payload(self, value: JsonObject[Any]) -> Self:
         return self.with_data(**{self.resource.singular: dict(value)})
 
+    def and_list(self, *items: JsonObject[Any]) -> Self:
+        return self.with_data(
+            **{
+                self.resource.plural: [dict(item) for item in items],
+                "count": len(items),
+            }
+        )
+
     def and_no_data(self) -> Self:
         return self.no_data()
 
