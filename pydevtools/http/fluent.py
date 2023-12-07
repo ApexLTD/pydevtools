@@ -64,9 +64,9 @@ class JsonObject(Generic[ValueT]):
 
 @dataclass
 class JsonList(Generic[ValueT]):
-    raw: list[dict[str, ValueT]]
+    raw: list[JsonObject[ValueT]]
 
-    def __iter__(self) -> Iterator[dict[str, ValueT]]:
+    def __iter__(self) -> Iterator[JsonObject[ValueT]]:
         yield from self.raw
 
 

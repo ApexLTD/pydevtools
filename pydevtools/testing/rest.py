@@ -62,7 +62,9 @@ class RestRequest:
         return JsonObject(self.response.json()["data"][self.resource.singular])
 
     def unpack_many(self) -> JsonList[Any]:
-        return JsonList(self.response.json()["data"][self.resource.plural])
+        items = self.response.json()["data"][self.resource.plural]
+
+        return JsonList([JsonObject(item) for item in items])
 
     def ensure(self) -> RestResponse:
         return RestResponse(
