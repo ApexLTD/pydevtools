@@ -73,16 +73,16 @@ class RestRequest:
 
 @dataclass
 class CreateOne(RestRequest):
-    data: dict[str, Any] = field(init=False)
+    data: JsonObject[Any] = field(init=False)
 
-    def from_data(self, value: dict[str, Any]) -> Self:
+    def from_data(self, value: JsonObject[Any]) -> Self:
         self.data = value
 
         return self
 
     @cached_property
     def response(self) -> httpx.Response:
-        return self.http.post(self.resource + "", json=self.data)
+        return self.http.post(self.resource + "", json=dict(self.data))
 
 
 @dataclass

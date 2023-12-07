@@ -19,7 +19,7 @@ from pydevtools.fastapi import (
     ResourceNotFound,
     Response,
 )
-from pydevtools.http import Httpx
+from pydevtools.http import Httpx, JsonObject
 from pydevtools.repository import InMemoryRepository
 from pydevtools.testing import RestfulName, RestResource
 
@@ -154,7 +154,7 @@ def test_should_not_list_anything_when_none_exist(resource: RestResource) -> Non
 
 
 def test_should_create(resource: RestResource) -> None:
-    apple = {"name": "Golden", "color": "Golden"}
+    apple = JsonObject({"name": "Golden", "color": "Golden"})
 
     (
         resource.create_one()
@@ -162,12 +162,12 @@ def test_should_create(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_data(apple={"id": ANY, **apple})
+        .and_data(apple={"id": ANY, **dict(apple)})
     )
 
 
 def test_should_persist(resource: RestResource) -> None:
-    apple = {"name": "Golden", "color": "Golden"}
+    apple = JsonObject({"name": "Golden", "color": "Golden"})
     id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
 
     (
@@ -176,12 +176,12 @@ def test_should_persist(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(200)
-        .and_data(apple={"id": id_, **apple})
+        .and_data(apple={"id": id_, **dict(apple)})
     )
 
 
 def test_should_not_duplicate(resource: RestResource) -> None:
-    apple = {"name": "Golden", "color": "Golden"}
+    apple = JsonObject({"name": "Golden", "color": "Golden"})
     id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
 
     (
@@ -190,7 +190,9 @@ def test_should_not_duplicate(resource: RestResource) -> None:
         .ensure()
         .fail()
         .with_code(409)
-        .and_message(f"An apple with the name<{apple['name']}> already exists.")
+        .and_message(
+            f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
+        )
         .and_data(apple={"id": id_})
     )
 
@@ -247,16 +249,18 @@ def test_should_persist_many(resource: RestResource) -> None:
 
 
 def test_should_not_duplicate_many(resource: RestResource) -> None:
-    apple = {"name": "Golden", "color": "Golden"}
+    apple = JsonObject({"name": "Golden", "color": "Golden"})
     id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
 
     (
         resource.create_many()
-        .from_data(apple)
-        .and_data(apple)
+        .from_data(dict(apple))
+        .and_data(dict(apple))
         .ensure()
         .fail()
         .with_code(409)
-        .and_message(f"An apple with the name<{apple['name']}> already exists.")
+        .and_message(
+            f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
+        )
         .and_data(apple={"id": id_})
     )
