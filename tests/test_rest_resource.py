@@ -240,7 +240,7 @@ def test_should_create_many(resource: RestResource) -> None:
 
 
 def test_should_persist_many(resource: RestResource) -> None:
-    many_apples = list(
+    many_apples = (
         resource.create_many()
         .from_data(fake.apple())
         .and_data(fake.apple())
