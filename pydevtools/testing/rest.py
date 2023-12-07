@@ -109,18 +109,18 @@ class ReadAll(RestRequest):
 @dataclass
 class UpdateOne(RestRequest):
     item_id: str | UUID = field(init=False)
-    data: dict[str, Any] = field(init=False)
+    data: JsonObject[Any] = field(init=False)
 
     @cached_property
     def response(self) -> httpx.Response:
-        return self.http.patch(self.resource + str(self.item_id), json=self.data)
+        return self.http.patch(self.resource + str(self.item_id), json=dict(self.data))
 
     def with_id(self, value: str | UUID) -> Self:
         self.item_id = str(value)
 
         return self
 
-    def and_data(self, value: dict[str, Any]) -> Self:
+    def and_data(self, value: JsonObject[Any]) -> Self:
         self.data = value
 
         return self

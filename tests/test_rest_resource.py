@@ -202,7 +202,7 @@ def test_should_not_patch(resource: RestResource) -> None:
     (
         resource.update_one()
         .with_id(id_)
-        .and_data({"color": "Green"})
+        .and_data(JsonObject({"color": "Green"}))
         .ensure()
         .fail()
         .with_code(400)
