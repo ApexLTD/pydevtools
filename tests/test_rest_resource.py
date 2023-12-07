@@ -179,7 +179,7 @@ def test_should_create(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_data(apple=dict(apple.push(id=ANY)))
+        .and_payload(apple.push(id=ANY))
     )
 
 
@@ -192,7 +192,7 @@ def test_should_persist(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(200)
-        .and_data(apple=dict(apple))
+        .and_payload(apple)
     )
 
 
@@ -208,7 +208,7 @@ def test_should_not_duplicate(resource: RestResource) -> None:
         .and_message(
             f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
         )
-        .and_data(apple=dict(apple.select("id")))
+        .and_payload(apple.select("id"))
     )
 
 

@@ -66,8 +66,9 @@ class RestRequest:
 
     def ensure(self) -> RestResponse:
         return RestResponse(
-            http_code=self.response.status_code,
+            resource=self.resource,
             json=JsonObject(self.response.json()),
+            http_code=self.response.status_code,
         )
 
 
@@ -148,6 +149,7 @@ class CreateMany(RestRequest):
 
 @dataclass
 class RestResponse:
+    resource: RestfulName
     json: JsonObject[Any]
     http_code: int
 
@@ -178,6 +180,9 @@ class RestResponse:
 
     def and_data(self, **kwargs: Any) -> Self:
         return self.with_data(**kwargs)
+
+    def and_payload(self, value: JsonObject[Any]) -> Self:
+        return self.with_data(**{self.resource.singular: dict(value)})
 
     def and_no_data(self) -> Self:
         return self.no_data()
