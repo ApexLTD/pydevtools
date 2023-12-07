@@ -180,8 +180,13 @@ class RestResponse:
 
         return self
 
-    def and_data(self, **kwargs: Any) -> Self:
-        return self.with_data(**kwargs)
+    def and_data(self, *items: JsonObject[Any]) -> Self:
+        items = [dict(item) for item in items]
+
+        if len(items) == 1:
+            return self.with_data(**{self.resource.singular: items[0]})
+
+        return self.with_data(**{self.resource.plural: items, "count": len(items)})
 
     def and_payload(self, value: JsonObject[Any]) -> Self:
         return self.with_data(**{self.resource.singular: dict(value)})

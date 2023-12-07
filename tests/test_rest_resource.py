@@ -167,7 +167,7 @@ def test_should_not_read_unknown(resource: RestResource) -> None:
 
 
 def test_should_not_list_anything_when_none_exist(resource: RestResource) -> None:
-    resource.read_all().ensure().success().with_code(200).and_list()
+    resource.read_all().ensure().success().with_code(200).and_data()
 
 
 def test_should_create(resource: RestResource) -> None:
@@ -179,7 +179,7 @@ def test_should_create(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_payload(apple.push(id=ANY))
+        .and_data(apple.push(id=ANY))
     )
 
 
@@ -192,7 +192,7 @@ def test_should_persist(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(200)
-        .and_payload(apple)
+        .and_data(apple)
     )
 
 
@@ -208,7 +208,7 @@ def test_should_not_duplicate(resource: RestResource) -> None:
         .and_message(
             f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
         )
-        .and_payload(apple.select("id"))
+        .and_data(apple.select("id"))
     )
 
 
@@ -235,7 +235,7 @@ def test_should_create_many(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_list(many_apples[0].push(id=ANY), many_apples[1].push(id=ANY))
+        .and_data(many_apples[0].push(id=ANY), many_apples[1].push(id=ANY))
     )
 
 
@@ -247,7 +247,7 @@ def test_should_persist_many(resource: RestResource) -> None:
         .unpack_many()
     )
 
-    resource.read_all().ensure().success().with_code(200).and_list(*many_apples)
+    resource.read_all().ensure().success().with_code(200).and_data(*many_apples)
 
 
 def test_should_not_duplicate_many(resource: RestResource) -> None:
@@ -263,5 +263,5 @@ def test_should_not_duplicate_many(resource: RestResource) -> None:
         .and_message(
             f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
         )
-        .and_payload(apple.select("id"))
+        .and_data(apple.select("id"))
     )
