@@ -180,13 +180,16 @@ class RestResponse:
 
         return self
 
-    def and_data(self, *items: JsonObject[Any]) -> Self:
-        items = [dict(item) for item in items]
+    def and_data(self, *values: JsonObject[Any]) -> Self:
+        if len(values) == 1:
+            return self.with_data(**{self.resource.singular: dict(values[0])})
 
-        if len(items) == 1:
-            return self.with_data(**{self.resource.singular: items[0]})
-
-        return self.with_data(**{self.resource.plural: items, "count": len(items)})
+        return self.with_data(
+            **{
+                self.resource.plural: [dict(value) for value in values],
+                "count": len(values),
+            }
+        )
 
     def and_no_data(self) -> Self:
         return self.no_data()
