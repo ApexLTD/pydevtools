@@ -179,38 +179,36 @@ def test_should_create(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_data(apple={"id": ANY, **dict(apple)})
+        .and_data(apple=dict(apple.push(id=ANY)))
     )
 
 
 def test_should_persist(resource: RestResource) -> None:
-    apple = fake.apple()
-    id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
+    apple = resource.create_one().from_data(fake.apple()).unpack()
 
     (
         resource.read_one()
-        .with_id(id_)
+        .with_id(apple.value_of("id").to(str))
         .ensure()
         .success()
         .with_code(200)
-        .and_data(apple={"id": id_, **dict(apple)})
+        .and_data(apple=dict(apple))
     )
 
 
 def test_should_not_duplicate(resource: RestResource) -> None:
-    apple = fake.apple()
-    id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
+    apple = resource.create_one().from_data(fake.apple()).unpack()
 
     (
         resource.create_one()
-        .from_data(apple)
+        .from_data(apple.drop("id"))
         .ensure()
         .fail()
         .with_code(409)
         .and_message(
             f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
         )
-        .and_data(apple={"id": id_})
+        .and_data(apple=dict(apple.select("id")))
     )
 
 
@@ -239,8 +237,8 @@ def test_should_create_many(resource: RestResource) -> None:
         .with_code(201)
         .and_data(
             apples=[
-                {"id": ANY, **dict(many_apples[0])},
-                {"id": ANY, **dict(many_apples[1])},
+                dict(many_apples[0].push(id=ANY)),
+                dict(many_apples[1].push(id=ANY)),
             ],
             count=2,
         )
@@ -277,5 +275,5 @@ def test_should_not_duplicate_many(resource: RestResource) -> None:
         .and_message(
             f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
         )
-        .and_data(apple={"id": apple.value_of("id").to(str)})
+        .and_data(apple=dict(apple.select("id")))
     )
