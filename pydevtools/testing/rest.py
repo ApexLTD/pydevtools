@@ -128,21 +128,21 @@ class UpdateOne(RestRequest):
 
 @dataclass
 class CreateMany(RestRequest):
-    data: list[dict[str, Any]] = field(default_factory=list)
+    data: list[JsonObject[Any]] = field(default_factory=list)
 
     @cached_property
     def response(self) -> httpx.Response:
         return self.http.post(
             self.resource + "batch",
-            json={self.resource.plural: self.data},
+            json={self.resource.plural: [dict(data) for data in self.data]},
         )
 
-    def from_data(self, value: dict[str, Any]) -> Self:
+    def from_data(self, value: JsonObject[Any]) -> Self:
         self.data.append(value)
 
         return self
 
-    def and_data(self, value: dict[str, Any]) -> Self:
+    def and_data(self, value: JsonObject[Any]) -> Self:
         return self.from_data(value)
 
 

@@ -211,8 +211,8 @@ def test_should_not_patch(resource: RestResource) -> None:
 
 
 def test_should_create_many(resource: RestResource) -> None:
-    apple_1 = {"name": "Golden", "color": "Golden"}
-    apple_2 = {"name": "Ambrosia", "color": "Red"}
+    apple_1 = JsonObject({"name": "Golden", "color": "Golden"})
+    apple_2 = JsonObject({"name": "Ambrosia", "color": "Red"})
 
     (
         resource.create_many()
@@ -223,8 +223,8 @@ def test_should_create_many(resource: RestResource) -> None:
         .with_code(201)
         .and_data(
             apples=[
-                {"id": ANY, **apple_1},
-                {"id": ANY, **apple_2},
+                {"id": ANY, **dict(apple_1)},
+                {"id": ANY, **dict(apple_2)},
             ],
             count=2,
         )
@@ -234,8 +234,8 @@ def test_should_create_many(resource: RestResource) -> None:
 def test_should_persist_many(resource: RestResource) -> None:
     many_apples = list(
         resource.create_many()
-        .from_data({"name": "Golden", "color": "Golden"})
-        .and_data({"name": "Ambrosia", "color": "Red"})
+        .from_data(JsonObject({"name": "Golden", "color": "Golden"}))
+        .and_data(JsonObject({"name": "Ambrosia", "color": "Red"}))
         .unpack_many()
     )
 
@@ -254,8 +254,8 @@ def test_should_not_duplicate_many(resource: RestResource) -> None:
 
     (
         resource.create_many()
-        .from_data(dict(apple))
-        .and_data(dict(apple))
+        .from_data(apple)
+        .and_data(apple)
         .ensure()
         .fail()
         .with_code(409)
