@@ -265,18 +265,17 @@ def test_should_persist_many(resource: RestResource) -> None:
 
 
 def test_should_not_duplicate_many(resource: RestResource) -> None:
-    apple = fake.apple()
-    id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
+    apple = resource.create_one().from_data(fake.apple()).unpack()
 
     (
         resource.create_many()
-        .from_data(apple)
-        .and_data(apple)
+        .from_data(apple.drop("id"))
+        .and_data(apple.drop("id"))
         .ensure()
         .fail()
         .with_code(409)
         .and_message(
             f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
         )
-        .and_data(apple={"id": id_})
+        .and_data(apple={"id": apple.value_of("id").to(str)})
     )
