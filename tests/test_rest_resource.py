@@ -5,6 +5,7 @@ from unittest.mock import ANY
 from uuid import UUID, uuid4
 
 import pytest
+from faker import Faker
 from fastapi import FastAPI
 from pydantic import BaseModel
 from starlette.testclient import TestClient
@@ -136,6 +137,22 @@ def resource(http: Httpx) -> RestResource:
     return RestResource(http, RestfulName("apple"))
 
 
+@dataclass
+class Fake:
+    faker: Faker = field(default_factory=Faker)
+
+    def apple(self) -> JsonObject[str]:
+        return JsonObject(
+            {
+                "name": self.faker.name(),
+                "color": self.faker.color(),
+            }
+        )
+
+
+fake = Fake()
+
+
 def test_should_not_read_unknown(resource: RestResource) -> None:
     unknown_id = uuid4()
 
@@ -154,7 +171,7 @@ def test_should_not_list_anything_when_none_exist(resource: RestResource) -> Non
 
 
 def test_should_create(resource: RestResource) -> None:
-    apple = JsonObject({"name": "Golden", "color": "Golden"})
+    apple = fake.apple()
 
     (
         resource.create_one()
@@ -167,7 +184,7 @@ def test_should_create(resource: RestResource) -> None:
 
 
 def test_should_persist(resource: RestResource) -> None:
-    apple = JsonObject({"name": "Golden", "color": "Golden"})
+    apple = fake.apple()
     id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
 
     (
@@ -181,7 +198,7 @@ def test_should_persist(resource: RestResource) -> None:
 
 
 def test_should_not_duplicate(resource: RestResource) -> None:
-    apple = JsonObject({"name": "Golden", "color": "Golden"})
+    apple = fake.apple()
     id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
 
     (
@@ -202,7 +219,7 @@ def test_should_not_patch(resource: RestResource) -> None:
     (
         resource.update_one()
         .with_id(id_)
-        .and_data(JsonObject({"color": "Green"}))
+        .and_data(fake.apple().drop("name"))
         .ensure()
         .fail()
         .with_code(400)
@@ -211,20 +228,19 @@ def test_should_not_patch(resource: RestResource) -> None:
 
 
 def test_should_create_many(resource: RestResource) -> None:
-    apple_1 = JsonObject({"name": "Golden", "color": "Golden"})
-    apple_2 = JsonObject({"name": "Ambrosia", "color": "Red"})
+    items = [fake.apple(), fake.apple()]
 
     (
         resource.create_many()
-        .from_data(apple_1)
-        .and_data(apple_2)
+        .from_data(items[0])
+        .and_data(items[1])
         .ensure()
         .success()
         .with_code(201)
         .and_data(
             apples=[
-                {"id": ANY, **dict(apple_1)},
-                {"id": ANY, **dict(apple_2)},
+                {"id": ANY, **dict(items[0])},
+                {"id": ANY, **dict(items[1])},
             ],
             count=2,
         )
@@ -234,8 +250,8 @@ def test_should_create_many(resource: RestResource) -> None:
 def test_should_persist_many(resource: RestResource) -> None:
     many_apples = list(
         resource.create_many()
-        .from_data(JsonObject({"name": "Golden", "color": "Golden"}))
-        .and_data(JsonObject({"name": "Ambrosia", "color": "Red"}))
+        .from_data(fake.apple())
+        .and_data(fake.apple())
         .unpack_many()
     )
 
@@ -249,7 +265,7 @@ def test_should_persist_many(resource: RestResource) -> None:
 
 
 def test_should_not_duplicate_many(resource: RestResource) -> None:
-    apple = JsonObject({"name": "Golden", "color": "Golden"})
+    apple = fake.apple()
     id_ = resource.create_one().from_data(apple).unpack().value_of("id").to(str)
 
     (
