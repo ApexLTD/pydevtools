@@ -263,5 +263,5 @@ def test_should_not_duplicate_many(resource: RestResource) -> None:
         .and_message(
             f"An apple with the name<{apple.value_of('name').to(str)}> already exists."
         )
-        .and_data(apple=dict(apple.select("id")))
+        .and_payload(apple.select("id"))
     )
