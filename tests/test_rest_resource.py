@@ -228,19 +228,19 @@ def test_should_not_patch(resource: RestResource) -> None:
 
 
 def test_should_create_many(resource: RestResource) -> None:
-    items = [fake.apple(), fake.apple()]
+    many_apples = [fake.apple(), fake.apple()]
 
     (
         resource.create_many()
-        .from_data(items[0])
-        .and_data(items[1])
+        .from_data(many_apples[0])
+        .and_data(many_apples[1])
         .ensure()
         .success()
         .with_code(201)
         .and_data(
             apples=[
-                {"id": ANY, **dict(items[0])},
-                {"id": ANY, **dict(items[1])},
+                {"id": ANY, **dict(many_apples[0])},
+                {"id": ANY, **dict(many_apples[1])},
             ],
             count=2,
         )
