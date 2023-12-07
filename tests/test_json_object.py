@@ -97,6 +97,6 @@ def test_should_add_a_key(faker: Faker) -> None:
     key = faker.word()
     value = faker.word()
 
-    updated = JsonObject({}).push(**{key: value})
+    updated = JsonObject({}).with_a(**{key: value})
 
     assert dict(updated) == {key: value}

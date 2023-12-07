@@ -179,7 +179,7 @@ def test_should_create(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_data(apple.push(id=ANY))
+        .and_data(apple.with_a(id=ANY))
     )
 
 
@@ -214,6 +214,7 @@ def test_should_not_duplicate(resource: RestResource) -> None:
 
 def test_should_not_patch(resource: RestResource) -> None:
     id_ = uuid4()
+
     (
         resource.update_one()
         .with_id(id_)
@@ -235,7 +236,7 @@ def test_should_create_many(resource: RestResource) -> None:
         .ensure()
         .success()
         .with_code(201)
-        .and_data(many_apples[0].push(id=ANY), many_apples[1].push(id=ANY))
+        .and_data(many_apples[0].with_a(id=ANY), many_apples[1].with_a(id=ANY))
     )
 
 

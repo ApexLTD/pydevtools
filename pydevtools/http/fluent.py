@@ -49,8 +49,8 @@ class JsonObject(Generic[ValueT]):
     def __iter__(self) -> Iterator[tuple[str, ValueT]]:
         yield from self.raw.items()
 
-    def push(self, **values) -> JsonObject[ValueT]:
-        return JsonObject({**self.raw, **values})
+    def with_a(self, **fields) -> JsonObject[ValueT]:
+        return JsonObject({**self.raw, **fields})
 
     def select(self, *keys: str) -> JsonObject[ValueT]:
         return JsonObject({k: v for k, v in self.raw.items() if k in keys})
