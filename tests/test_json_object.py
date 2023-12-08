@@ -114,7 +114,7 @@ def test_should_merge_json_object_with_empty(faker: Faker) -> None:
     assert dict(result) == dict(json_object)
 
 
-def test_should_merge_json_objects_no_overlap(faker: Faker) -> None:
+def test_should_merge_json_objects_without_overlap(faker: Faker) -> None:
     key1, value1 = faker.word(), faker.word()
     key2, value2 = faker.word(), faker.word()
 
