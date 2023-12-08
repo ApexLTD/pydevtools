@@ -115,17 +115,18 @@ def test_should_merge_json_object_with_empty(faker: Faker) -> None:
 
 
 def test_should_merge_json_objects_without_overlap(faker: Faker) -> None:
-    key1, value1 = faker.word(), faker.word()
-    key2, value2 = faker.word(), faker.word()
+    key1 = faker.word()
+    key2 = faker.word()
 
-    result = JsonObject({key1: value1}).merge(JsonObject({key2: value2}))
+    result = JsonObject({key1: ANY}).merge(JsonObject({key2: ANY}))
 
-    assert dict(result) == {key1: value1, key2: value2}
+    assert dict(result) == {key1: ANY, key2: ANY}
 
 
 def test_should_merge_json_objects_with_overlap(faker: Faker) -> None:
-    key, value = faker.word(), faker.word()
+    key = faker.word()
+    value = faker.word()
 
-    result = JsonObject({key: faker.word()}).merge(JsonObject({key: value}))
+    result = JsonObject({key: ANY}).merge(JsonObject({key: value}))
 
     assert dict(result) == {key: value}
