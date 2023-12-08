@@ -120,18 +120,12 @@ def test_should_merge_json_objects_with_overlap(faker: Faker) -> None:
 
 
 def test_should_merge_json_object_with_empty(faker: Faker) -> None:
-    obj1 = JsonObject({faker.word(): faker.word(), faker.word(): faker.word()})
-    obj2 = JsonObject({})
+    json_object = JsonObject({faker.word(): faker.word()})
 
-    result = obj1.merge(obj2)
+    result = json_object.merge(JsonObject({}))
 
-    assert dict(result) == dict(obj1)
+    assert dict(result) == dict(json_object)
 
 
 def test_should_merge_empty_json_objects() -> None:
-    obj1 = JsonObject({})
-    obj2 = JsonObject({})
-
-    result = obj1.merge(obj2)
-
-    assert dict(result) == {}
+    assert dict(JsonObject({}).merge(JsonObject({}))) == {}
