@@ -7,19 +7,18 @@ from uuid import UUID, uuid4
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from pydevtools.error import ExistsError, DoesNotExistError
+from pydevtools.error import DoesNotExistError, ExistsError
 from pydevtools.fastapi import (
-    Response,
+    BadRequest,
+    NoData,
     ResourceCreated,
     ResourceExists,
     ResourceFound,
     ResourceNotFound,
-    NoData,
-    BadRequest,
+    Response,
 )
 from pydevtools.fastapi.dependables import inject
 from pydevtools.repository import InMemoryRepository
-
 
 app = FastAPI()
 
