@@ -18,6 +18,9 @@ class InMemoryRepository(Generic[ItemT]):
     uniques: list[str] = field(default_factory=list)
     search_by: list[str] = field(default_factory=list)
 
+    def __post_init__(self) -> None:
+        self.search_by = ["id", *self.search_by]
+
     def with_unique(self, attribute: str) -> Self:
         self.uniques.append(attribute)
 
@@ -48,11 +51,6 @@ class InMemoryRepository(Generic[ItemT]):
         assert str(item.id) not in self.items, f"Item with id<{item.id}> already exists"
 
     def read(self, item_id: Any) -> ItemT:
-        try:
-            return self.items[str(item_id)]
-        except KeyError:
-            pass
-
         for item in self.items.values():
             for attribute in self.search_by:
                 if getattr(item, attribute) == item_id:
