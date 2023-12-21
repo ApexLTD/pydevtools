@@ -20,7 +20,7 @@ from pydevtools.fastapi import (
 from pydevtools.fastapi.dependables import inject
 from pydevtools.repository import InMemoryRepository
 
-app = FastAPI()
+apple_api = FastAPI()
 
 
 @dataclass
@@ -55,7 +55,7 @@ class AppleCreateManyRequest(BaseModel):
     apples: list[AppleCreateRequest]
 
 
-@app.post(
+@apple_api.post(
     "/apples",
     status_code=201,
     response_model=Response[AppleItemEnvelope],
@@ -77,7 +77,7 @@ def create(
     return ResourceCreated(apple=apple)
 
 
-@app.post(
+@apple_api.post(
     "/apples/batch",
     status_code=201,
     response_model=Response[AppleListEnvelope],
@@ -99,7 +99,7 @@ def create_many(
     return ResourceCreated(apples=result, count=len(result))
 
 
-@app.get(
+@apple_api.get(
     "/apples/{apple_id}",
     status_code=200,
     response_model=Response[AppleItemEnvelope],
@@ -114,7 +114,7 @@ def read_one(
         return ResourceNotFound(message=f"An apple with id<{apple_id}> does not exist.")
 
 
-@app.get(
+@apple_api.get(
     "/apples",
     status_code=200,
     response_model=Response[AppleListEnvelope],
@@ -125,6 +125,6 @@ def read_all(
     return ResourceFound(apples=list(apples), count=len(apples))
 
 
-@app.patch("/apples/{apple_id}", response_model=Response[NoData])
+@apple_api.patch("/apples/{apple_id}", response_model=Response[NoData])
 def patch(apple_id: UUID) -> BadRequest:
     return BadRequest(message=f"Patching <{apple_id}> is not allowed")

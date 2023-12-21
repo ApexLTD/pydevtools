@@ -11,14 +11,14 @@ from starlette.testclient import TestClient
 from pydevtools.http import Httpx, JsonObject
 from pydevtools.repository import InMemoryRepository
 from pydevtools.testing import RestfulName, RestResource
-from tests.sample_api import Apple, app
+from tests.sample_api import Apple, apple_api
 
 
 @pytest.fixture
 def http() -> TestClient:
-    app.state.apples = InMemoryRepository[Apple]().with_unique("name")
+    apple_api.state.apples = InMemoryRepository[Apple]().with_unique("name")
 
-    return TestClient(app)
+    return TestClient(apple_api)
 
 
 @pytest.fixture
