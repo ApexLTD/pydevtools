@@ -6,6 +6,7 @@ from uuid import uuid4
 
 import pytest
 from faker import Faker
+from fastapi import FastAPI
 from starlette.testclient import TestClient
 
 from pydevtools.http import Httpx, JsonObject
@@ -16,9 +17,11 @@ from tests.sample_api import Apple, apple_api
 
 @pytest.fixture
 def http() -> TestClient:
-    apple_api.state.apples = InMemoryRepository[Apple]().with_unique("name")
+    app = FastAPI()
+    app.state.apples = InMemoryRepository[Apple]().with_unique("name")
+    app.include_router(apple_api)
 
-    return TestClient(apple_api)
+    return TestClient(app)
 
 
 @pytest.fixture

@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Annotated
 from uuid import UUID, uuid4
 
-from fastapi import FastAPI
+from fastapi import APIRouter
 from pydantic import BaseModel
 
 from pydevtools.error import DoesNotExistError, ExistsError
@@ -20,7 +20,7 @@ from pydevtools.fastapi import (
 from pydevtools.fastapi.dependables import inject
 from pydevtools.repository import InMemoryRepository
 
-apple_api = FastAPI()
+apple_api = APIRouter()
 
 
 @dataclass
