@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Annotated
 from unittest.mock import ANY
 from uuid import UUID, uuid4
 
@@ -20,6 +21,7 @@ from pydevtools.fastapi import (
     ResourceNotFound,
     Response,
 )
+from pydevtools.fastapi.dependables import inject
 from pydevtools.http import Httpx, JsonObject
 from pydevtools.repository import InMemoryRepository
 from pydevtools.testing import RestfulName, RestResource
@@ -34,7 +36,6 @@ class Apple:
 
 
 app = FastAPI()
-apples = InMemoryRepository[Apple]().with_unique("name")
 
 
 class AppleItem(BaseModel):
@@ -66,7 +67,10 @@ class AppleCreateManyRequest(BaseModel):
     status_code=201,
     response_model=Response[AppleItemEnvelope],
 )
-def create(request: AppleCreateRequest) -> ResourceCreated | ResourceExists:
+def create(
+    request: AppleCreateRequest,
+    apples: Annotated[InMemoryRepository[Apple], inject("apples")],
+) -> ResourceCreated | ResourceExists:
     apple = Apple(**request.model_dump())
 
     try:
@@ -85,7 +89,10 @@ def create(request: AppleCreateRequest) -> ResourceCreated | ResourceExists:
     status_code=201,
     response_model=Response[AppleListEnvelope],
 )
-def create_many(requests: AppleCreateManyRequest) -> ResourceCreated | ResourceExists:
+def create_many(
+    requests: AppleCreateManyRequest,
+    apples: Annotated[InMemoryRepository[Apple], inject("apples")],
+) -> ResourceCreated | ResourceExists:
     result = [Apple(**request.model_dump()) for request in requests.apples]
 
     try:
@@ -104,7 +111,10 @@ def create_many(requests: AppleCreateManyRequest) -> ResourceCreated | ResourceE
     status_code=200,
     response_model=Response[AppleItemEnvelope],
 )
-def read_one(apple_id: UUID) -> ResourceFound | ResourceNotFound:
+def read_one(
+    apple_id: UUID,
+    apples: Annotated[InMemoryRepository[Apple], inject("apples")],
+) -> ResourceFound | ResourceNotFound:
     try:
         return ResourceFound(apple=apples.read(apple_id))
     except DoesNotExistError:
@@ -116,7 +126,9 @@ def read_one(apple_id: UUID) -> ResourceFound | ResourceNotFound:
     status_code=200,
     response_model=Response[AppleListEnvelope],
 )
-def read_all() -> ResourceFound:
+def read_all(
+    apples: Annotated[InMemoryRepository[Apple], inject("apples")]
+) -> ResourceFound:
     return ResourceFound(apples=list(apples), count=len(apples))
 
 
@@ -127,7 +139,7 @@ def patch(apple_id: UUID) -> BadRequest:
 
 @pytest.fixture
 def http() -> TestClient:
-    apples.items = {}
+    app.state.apples = InMemoryRepository[Apple]().with_unique("name")
 
     return TestClient(app)
 
