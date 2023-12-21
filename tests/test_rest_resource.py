@@ -6,9 +6,9 @@ from uuid import uuid4
 
 import pytest
 from faker import Faker
-from fastapi import FastAPI
 from starlette.testclient import TestClient
 
+from pydevtools.fastapi.builder import FastApiBuilder
 from pydevtools.http import Httpx, JsonObject
 from pydevtools.repository import InMemoryRepository
 from pydevtools.testing import RestfulName, RestResource
@@ -17,11 +17,15 @@ from tests.sample_api import Apple, apple_api
 
 @pytest.fixture
 def http() -> TestClient:
-    app = FastAPI()
-    app.state.apples = InMemoryRepository[Apple]().with_unique("name")
-    app.include_router(apple_api)
-
-    return TestClient(app)
+    return TestClient(
+        FastApiBuilder()
+        .with_title("Apple API")
+        .with_version("1.0.0")
+        .with_description("Sample API for unit testing various testing routines")
+        .with_dependency(apples=InMemoryRepository[Apple]().with_unique("name"))
+        .with_route(apples=apple_api)
+        .build()
+    )
 
 
 @pytest.fixture
