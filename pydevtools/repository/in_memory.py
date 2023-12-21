@@ -16,9 +16,15 @@ class InMemoryRepository(Generic[ItemT]):
     items: dict[str, ItemT] = field(default_factory=dict)
 
     uniques: list[str] = field(default_factory=list)
+    search_by: list[str] = field(default_factory=list)
 
     def with_unique(self, attribute: str) -> Self:
         self.uniques.append(attribute)
+
+        return self
+
+    def with_searchable(self, attribute: str) -> Self:
+        self.search_by.append(attribute)
 
         return self
 
@@ -45,7 +51,14 @@ class InMemoryRepository(Generic[ItemT]):
         try:
             return self.items[str(item_id)]
         except KeyError:
-            raise DoesNotExistError(item_id)
+            pass
+
+        for item in self.items.values():
+            for attribute in self.search_by:
+                if getattr(item, attribute) == item_id:
+                    return item
+
+        raise DoesNotExistError(item_id)
 
     def update(self, item: ItemT) -> None:
         self.delete(item.id)
