@@ -12,17 +12,25 @@ ItemT = TypeVar("ItemT", bound=_Item)
 
 
 @dataclass
+class DefaultKey:
+    name: str
+
+    def apply(self, i: ItemT) -> Any:
+        return getattr(i, self.name)
+
+
+@dataclass
 class InMemoryRepository(Generic[ItemT]):
     items: dict[str, ItemT] = field(default_factory=dict)
 
-    _uniques: list[str] = field(init=False, default_factory=list)
+    _uniques: list[DefaultKey] = field(init=False, default_factory=list)
     _search_by: list[str] = field(init=False, default_factory=list)
 
     def __post_init__(self) -> None:
         self._search_by = ["id", *self._search_by]
 
     def with_unique(self, attribute: str) -> Self:
-        self._uniques.append(attribute)
+        self._uniques.append(DefaultKey(attribute))
 
         return self
 
@@ -43,12 +51,11 @@ class InMemoryRepository(Generic[ItemT]):
         for existing in self.items.values():
             error = ExistsError(existing.id)
 
-            fields = {}
-            for name in self._uniques:
-                if getattr(item, name) == getattr(existing, name):
-                    fields.update({name: getattr(item, name)})
+            for key in self._uniques:
+                if key.apply(item) == key.apply(existing):
+                    error.with_duplicate(**{key.name: key.apply(item)})
 
-            error.with_duplicate(**fields).fire()
+            error.fire()
 
         assert str(item.id) not in self.items, f"Item with id<{item.id}> already exists"
 
