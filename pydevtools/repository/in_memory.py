@@ -11,8 +11,15 @@ class _Item(Protocol):
 ItemT = TypeVar("ItemT", bound=_Item)
 
 
+class Key(Protocol):
+    name: str
+
+    def apply(self, i: ItemT) -> Any:
+        pass
+
+
 @dataclass
-class DefaultKey:
+class AttributeKey:
     name: str
 
     def apply(self, i: ItemT) -> Any:
@@ -23,14 +30,14 @@ class DefaultKey:
 class InMemoryRepository(Generic[ItemT]):
     items: dict[str, ItemT] = field(default_factory=dict)
 
-    _uniques: list[DefaultKey] = field(init=False, default_factory=list)
+    _uniques: list[Key] = field(init=False, default_factory=list)
     _search_by: list[str] = field(init=False, default_factory=list)
 
     def __post_init__(self) -> None:
         self._search_by = ["id", *self._search_by]
 
     def with_unique(self, attribute: str) -> Self:
-        self._uniques.append(DefaultKey(attribute))
+        self._uniques.append(AttributeKey(attribute))
 
         return self
 
