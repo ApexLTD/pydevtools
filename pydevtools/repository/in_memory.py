@@ -42,11 +42,13 @@ class InMemoryRepository(Generic[ItemT]):
     def _ensure_does_not_exist(self, item: ItemT) -> None:
         for existing in self.items.values():
             error = ExistsError(existing.id)
+
+            fields = {}
             for name in self._uniques:
                 if getattr(item, name) == getattr(existing, name):
-                    error.with_duplicate(**{name: getattr(item, name)})
+                    fields.update({name: getattr(item, name)})
 
-            error.fire()
+            error.with_duplicate(**fields).fire()
 
         assert str(item.id) not in self.items, f"Item with id<{item.id}> already exists"
 

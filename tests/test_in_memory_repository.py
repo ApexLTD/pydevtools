@@ -56,6 +56,19 @@ def test_should_not_duplicate(faker: Faker) -> None:
     assert str(cm.value) == f"code<{company.code}>"
 
 
+def test_should_not_not_duplicate_many_fields(faker: Faker) -> None:
+    company = _Company(id=uuid4(), name=faker.company(), code=faker.ein())
+    repository = InMemoryRepository[_Company]().with_unique("code").with_unique("name")
+    repository.create(company)
+
+    duplicate = _Company(id=uuid4(), name=company.name, code=company.code)
+    with pytest.raises(ExistsError) as cm:
+        repository.create(duplicate)
+
+    assert cm.value.id == company.id
+    assert str(cm.value) == f"code<{company.code}>,name<{company.name}>"
+
+
 def test_should_list(faker: Faker) -> None:
     companies = [
         _Company(id=uuid4(), name=faker.company(), code=faker.ein()),
