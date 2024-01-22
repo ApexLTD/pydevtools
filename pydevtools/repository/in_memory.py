@@ -14,7 +14,7 @@ ItemT = TypeVar("ItemT", bound=_Item)
 class Key(Protocol):
     name: str
 
-    def apply(self, i: ItemT) -> Any:
+    def apply(self, item: ItemT) -> Any:
         pass
 
 
@@ -22,8 +22,8 @@ class Key(Protocol):
 class AttributeKey:
     name: str
 
-    def apply(self, i: ItemT) -> Any:
-        return getattr(i, self.name)
+    def apply(self, item: ItemT) -> Any:
+        return getattr(item, self.name)
 
 
 @dataclass
