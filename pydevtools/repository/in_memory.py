@@ -46,6 +46,11 @@ class InMemoryRepository(Generic[ItemT]):
 
         return self
 
+    def with_key(self, name: Key) -> Self:
+        self._uniques.append(name)
+
+        return self
+
     def create_many(self, items: list[ItemT]) -> None:
         for item in items:
             self.create(item)
