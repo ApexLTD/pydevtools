@@ -11,7 +11,6 @@ from fastapi.testclient import TestClient
 from pydevtools.fastapi import FastApiBuilder
 from pydevtools.http import Httpx, JsonObject
 from pydevtools.repository import InMemoryRepository
-from pydevtools.repository.in_memory import Attribute
 from pydevtools.testing import RestfulName, RestResource
 from tests.sample_api import Apple, apple_api
 
@@ -24,7 +23,9 @@ def http() -> TestClient:
         .with_version("1.0.0")
         .with_description("Sample API for unit testing various testing routines")
         .with_dependency(
-            apples=InMemoryRepository[Apple]().with_unique(Attribute("name"))
+            apples=InMemoryRepository[Apple]().with_unique(
+                criteria=lambda item: f"name<{item.name}>"
+            )
         )
         .with_route(apples=apple_api)
         .build()
