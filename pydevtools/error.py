@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Protocol, Self
+from typing import Any, Callable, Self
+
+Criteria = Callable[[Any], str]
 
 
 @dataclass
@@ -27,8 +29,3 @@ class ExistsError(Exception):
 @dataclass
 class DoesNotExistError(Exception):
     id: Any
-
-
-class Criteria(Protocol):
-    def __call__(self, item: Any) -> str:
-        pass
