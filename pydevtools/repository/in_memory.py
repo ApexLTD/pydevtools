@@ -11,7 +11,7 @@ class _Item(Protocol):
 ItemT = TypeVar("ItemT", bound=_Item)
 
 
-class Key(Protocol):
+class Criteria(Protocol):
     name: str
 
     def apply(self, item: ItemT) -> Any:
@@ -30,7 +30,7 @@ class AttributeKey:
 class InMemoryRepository(Generic[ItemT]):
     items: dict[str, ItemT] = field(default_factory=dict)
 
-    _uniques: list[Key] = field(init=False, default_factory=list)
+    _uniques: list[Criteria] = field(init=False, default_factory=list)
     _search_by: list[str] = field(init=False, default_factory=list)
 
     def __post_init__(self) -> None:
@@ -46,7 +46,7 @@ class InMemoryRepository(Generic[ItemT]):
 
         return self
 
-    def with_key(self, name: Key) -> Self:
+    def with_key(self, name: Criteria) -> Self:
         self._uniques.append(name)
 
         return self
