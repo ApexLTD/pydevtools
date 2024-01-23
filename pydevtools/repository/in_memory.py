@@ -14,7 +14,7 @@ ItemT = TypeVar("ItemT", bound=_Item)
 class Criteria(Protocol):
     name: str
 
-    def __call__(self, item: ItemT) -> Any:
+    def __call__(self, item: Any) -> Any:
         pass
 
 
@@ -22,7 +22,7 @@ class Criteria(Protocol):
 class Attribute:
     name: str
 
-    def __call__(self, item: ItemT) -> Any:
+    def __call__(self, item: Any) -> Any:
         return getattr(item, self.name)
 
 
