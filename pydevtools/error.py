@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Self, Protocol
+from typing import Any, Protocol, Self
 
 
 @dataclass
@@ -17,9 +17,7 @@ class ExistsError(Exception):
         return self
 
     def __str__(self) -> str:
-        return ",".join(
-            [f"{criteria.name}<{criteria(self.item)}>" for criteria in self._duplicates]
-        )
+        return ",".join([f"{criteria(self.item)}" for criteria in self._duplicates])
 
     def fire(self) -> None:
         if self._duplicates:
@@ -32,7 +30,5 @@ class DoesNotExistError(Exception):
 
 
 class Criteria(Protocol):
-    name: str
-
-    def __call__(self, item: Any) -> Any:
+    def __call__(self, item: Any) -> str:
         pass

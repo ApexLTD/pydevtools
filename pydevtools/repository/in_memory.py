@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Generic, Iterator, Protocol, Self, TypeVar
 
-from pydevtools.error import DoesNotExistError, ExistsError, Criteria
+from pydevtools.error import Criteria, DoesNotExistError, ExistsError
 
 
 class _Item(Protocol):
@@ -16,7 +16,7 @@ class Attribute:
     name: str
 
     def __call__(self, item: Any) -> Any:
-        return getattr(item, self.name)
+        return f"{self.name}<{getattr(item, self.name)}>"
 
 
 @dataclass
