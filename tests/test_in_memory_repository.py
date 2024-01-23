@@ -6,7 +6,7 @@ from faker import Faker
 
 from pydevtools.error import DoesNotExistError, ExistsError
 from pydevtools.repository import InMemoryRepository
-from pydevtools.repository.in_memory import AttributeKey
+from pydevtools.repository.in_memory import Attribute
 
 
 @dataclass
@@ -46,7 +46,7 @@ def test_should_read_by_custom_field(faker: Faker) -> None:
 
 def test_should_not_duplicate(faker: Faker) -> None:
     company = _Company(id=uuid4(), name=faker.company(), code=faker.ein())
-    repository = InMemoryRepository[_Company]().with_key(AttributeKey("code"))
+    repository = InMemoryRepository[_Company]().with_key(Attribute("code"))
     repository.create(company)
 
     duplicate = _Company(id=uuid4(), name=faker.company(), code=company.code)
@@ -61,8 +61,8 @@ def test_should_not_not_duplicate_many_fields(faker: Faker) -> None:
     company = _Company(id=uuid4(), name=faker.company(), code=faker.ein())
     repository = (
         InMemoryRepository[_Company]()
-        .with_key(AttributeKey("code"))
-        .with_key(AttributeKey("name"))
+        .with_key(Attribute("code"))
+        .with_key(Attribute("name"))
     )
     repository.create(company)
 

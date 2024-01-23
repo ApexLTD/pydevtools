@@ -19,7 +19,7 @@ class Criteria(Protocol):
 
 
 @dataclass
-class AttributeKey:
+class Attribute:
     name: str
 
     def apply(self, item: ItemT) -> Any:
@@ -37,7 +37,7 @@ class InMemoryRepository(Generic[ItemT]):
         self._search_by = ["id", *self._search_by]
 
     def with_unique(self, attribute: str) -> Self:
-        self._uniques.append(AttributeKey(attribute))
+        self._uniques.append(Attribute(attribute))
 
         return self
 
