@@ -36,11 +36,6 @@ class InMemoryRepository(Generic[ItemT]):
     def __post_init__(self) -> None:
         self._search_by = ["id", *self._search_by]
 
-    def with_unique(self, attribute: str) -> Self:
-        self._uniques.append(Attribute(attribute))
-
-        return self
-
     def with_searchable(self, attribute: str) -> Self:
         self._search_by.append(attribute)
 
