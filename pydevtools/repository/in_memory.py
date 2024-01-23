@@ -41,7 +41,7 @@ class InMemoryRepository(Generic[ItemT]):
 
     def _ensure_does_not_exist(self, new: ItemT) -> None:
         for existing in self.items.values():
-            error = ExistsError(existing.id, item=existing)
+            error = ExistsError(existing)
 
             for criteria in self._uniques:
                 if criteria(new) == criteria(existing):

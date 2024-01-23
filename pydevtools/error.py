@@ -8,10 +8,13 @@ Criteria = Callable[[Any], str]
 
 @dataclass
 class ExistsError(Exception):
-    id: Any
-    item: Any = None
+    item: Any
 
     _duplicates: list[Criteria] = field(init=False, default_factory=list)
+
+    @property
+    def id(self) -> Any:
+        return self.item.id
 
     def with_duplicate(self, criteria: Criteria) -> Self:
         self._duplicates.append(criteria)
