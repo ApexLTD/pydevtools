@@ -46,7 +46,7 @@ def test_should_read_by_custom_field(faker: Faker) -> None:
 
 def test_should_not_duplicate(faker: Faker) -> None:
     company = _Company(id=uuid4(), name=faker.company(), code=faker.ein())
-    repository = InMemoryRepository[_Company]().with_key(Attribute("code"))
+    repository = InMemoryRepository[_Company]().with_unique(Attribute("code"))
     repository.create(company)
 
     duplicate = _Company(id=uuid4(), name=faker.company(), code=company.code)
@@ -61,8 +61,8 @@ def test_should_not_not_duplicate_many_fields(faker: Faker) -> None:
     company = _Company(id=uuid4(), name=faker.company(), code=faker.ein())
     repository = (
         InMemoryRepository[_Company]()
-        .with_key(Attribute("code"))
-        .with_key(Attribute("name"))
+        .with_unique(Attribute("code"))
+        .with_unique(Attribute("name"))
     )
     repository.create(company)
 
