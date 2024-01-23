@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Self
+from typing import Any, Self, Protocol
 
 
 @dataclass
@@ -27,3 +27,10 @@ class ExistsError(Exception):
 @dataclass
 class DoesNotExistError(Exception):
     id: Any
+
+
+class Criteria(Protocol):
+    name: str
+
+    def __call__(self, item: Any) -> Any:
+        pass

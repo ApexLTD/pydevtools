@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Generic, Iterator, Protocol, Self, TypeVar
 
-from pydevtools.error import DoesNotExistError, ExistsError
+from pydevtools.error import DoesNotExistError, ExistsError, Criteria
 
 
 class _Item(Protocol):
@@ -9,13 +9,6 @@ class _Item(Protocol):
 
 
 ItemT = TypeVar("ItemT", bound=_Item)
-
-
-class Criteria(Protocol):
-    name: str
-
-    def __call__(self, item: Any) -> Any:
-        pass
 
 
 @dataclass
