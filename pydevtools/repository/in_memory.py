@@ -14,7 +14,7 @@ ItemT = TypeVar("ItemT", bound=_Item)
 class Criteria(Protocol):
     name: str
 
-    def apply(self, item: ItemT) -> Any:
+    def __call__(self, item: ItemT) -> Any:
         pass
 
 
@@ -22,7 +22,7 @@ class Criteria(Protocol):
 class Attribute:
     name: str
 
-    def apply(self, item: ItemT) -> Any:
+    def __call__(self, item: ItemT) -> Any:
         return getattr(item, self.name)
 
 
@@ -64,8 +64,8 @@ class InMemoryRepository(Generic[ItemT]):
             error = ExistsError(existing.id)
 
             for criteria in self._uniques:
-                if criteria.apply(item) == criteria.apply(existing):
-                    error.with_duplicate(**{criteria.name: criteria.apply(item)})
+                if criteria(item) == criteria(existing):
+                    error.with_duplicate(**{criteria.name: criteria(item)})
 
             error.fire()
 
