@@ -9,15 +9,17 @@ class ExistsError(Exception):
     id: Any
     item: Any = None
 
-    _duplicates: dict[str, Any] = field(init=False, default_factory=dict)
+    _duplicates: list[Criteria] = field(init=False, default_factory=list)
 
     def with_duplicate(self, criteria: Criteria) -> Self:
-        self._duplicates[criteria.name] = criteria(self.item)
+        self._duplicates.append(criteria)
 
         return self
 
     def __str__(self) -> str:
-        return ",".join([f"{k}<{v}>" for k, v in self._duplicates.items()])
+        return ",".join(
+            [f"{criteria.name}<{criteria(self.item)}>" for criteria in self._duplicates]
+        )
 
     def fire(self) -> None:
         if self._duplicates:
