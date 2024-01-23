@@ -12,14 +12,6 @@ ItemT = TypeVar("ItemT", bound=_Item)
 
 
 @dataclass
-class Attribute:
-    name: str
-
-    def __call__(self, item: Any) -> Any:
-        return f"{self.name}<{getattr(item, self.name)}>"
-
-
-@dataclass
 class InMemoryRepository(Generic[ItemT]):
     items: dict[str, ItemT] = field(default_factory=dict)
 
