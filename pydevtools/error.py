@@ -7,12 +7,12 @@ from typing import Any, Self, Protocol
 @dataclass
 class ExistsError(Exception):
     id: Any
+    item: Any = None
 
     _duplicates: dict[str, Any] = field(init=False, default_factory=dict)
 
-    def with_duplicate(self, **fields: Any) -> Self:
-        for key, value in fields.items():
-            self._duplicates[key] = value
+    def with_duplicate(self, criteria: Criteria) -> Self:
+        self._duplicates[criteria.name] = criteria(self.item)
 
         return self
 

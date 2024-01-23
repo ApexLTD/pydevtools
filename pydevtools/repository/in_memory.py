@@ -49,11 +49,11 @@ class InMemoryRepository(Generic[ItemT]):
 
     def _ensure_does_not_exist(self, item: ItemT) -> None:
         for existing in self.items.values():
-            error = ExistsError(existing.id)
+            error = ExistsError(existing.id, item=existing)
 
             for criteria in self._uniques:
                 if criteria(item) == criteria(existing):
-                    error.with_duplicate(**{criteria.name: criteria(item)})
+                    error.with_duplicate(criteria)
 
             error.fire()
 
