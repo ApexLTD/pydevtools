@@ -34,8 +34,8 @@ class InMemoryRepository(Generic[ItemT]):
 
         return self
 
-    def with_unique(self, name: Criteria) -> Self:
-        self._uniques.append(name)
+    def with_unique(self, criteria: Criteria) -> Self:
+        self._uniques.append(criteria)
 
         return self
 
