@@ -179,3 +179,16 @@ def test_should_not_delete_unknown(resource: RestResource) -> None:
         .with_code(404)
         .and_message(f"An apple with id<{unknown_id}> does not exist.")
     )
+
+
+def test_should_delete(resource: RestResource) -> None:
+    apple = resource.create_one().from_data(fake.apple()).unpack()
+
+    (
+        resource.delete_one()
+        .with_id(apple.value_of("id").to(str))
+        .ensure()
+        .success()
+        .with_code(200)
+        .and_no_data()
+    )

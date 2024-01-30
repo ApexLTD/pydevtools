@@ -131,5 +131,12 @@ def patch(apple_id: UUID) -> BadRequest:
 
 
 @apple_api.delete("/{apple_id}", response_model=Response[NoData])
-def delete(apple_id: UUID) -> ResourceNotFound:
-    return ResourceNotFound(message=f"An apple with id<{apple_id}> does not exist.")
+def delete(
+    apple_id: UUID, apples: Annotated[InMemoryRepository[Apple], inject("apples")]
+) -> ResourceNotFound | ResourceFound:
+    try:
+        apples.delete(apple_id)
+    except DoesNotExistError:
+        return ResourceNotFound(message=f"An apple with id<{apple_id}> does not exist.")
+
+    return ResourceFound()
