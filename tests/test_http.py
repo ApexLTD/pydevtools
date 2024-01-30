@@ -67,6 +67,22 @@ def test_patch(http: FluentHttpx) -> None:
     assert echo.value_of("headers").to(JsonDict)["Content-Type"] == "application/json"
 
 
+@pytest.mark.vcr
+def test_delete(http: FluentHttpx) -> None:
+    echo = (
+        http.delete()
+        .on_endpoint("/delete")
+        .on_failure(
+            raises=AssertionError,
+        )
+        .json()
+    )
+
+    assert echo.value_of("args").to(JsonDict) == {}
+    assert echo.value_of("url").to(str) == ECHO_SERVER + "/delete"
+    assert echo.value_of("headers").to(JsonDict)["User-Agent"] == "hogwarts"
+
+
 class BadRequestError(Exception):
     pass
 
