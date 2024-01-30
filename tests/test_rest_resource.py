@@ -192,3 +192,18 @@ def test_should_delete(resource: RestResource) -> None:
         .with_code(200)
         .and_no_data()
     )
+
+
+def test_should_persist_delete(resource: RestResource) -> None:
+    id_ = resource.create_one().from_data(fake.apple()).unpack().value_of("id").to(str)
+
+    resource.delete_one().with_id(id_).ensure().success()
+
+    (
+        resource.read_one()
+        .with_id(id_)
+        .ensure()
+        .fail()
+        .with_code(404)
+        .and_message(f"An apple with id<{id_}> does not exist.")
+    )
