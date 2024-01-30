@@ -110,3 +110,11 @@ def test_should_delete(faker: Faker) -> None:
 
     with pytest.raises(DoesNotExistError):
         repository.read(company.id)
+
+
+def test_should_not_delete_unknown() -> None:
+    unknown_id = uuid4()
+    repository = InMemoryRepository[_Company]()
+
+    with pytest.raises(DoesNotExistError):
+        repository.delete(unknown_id)
