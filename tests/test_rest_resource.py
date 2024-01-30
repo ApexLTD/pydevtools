@@ -166,3 +166,16 @@ def test_should_not_duplicate_many(resource: RestResource) -> None:
         )
         .and_data(apple.select("id"))
     )
+
+
+def test_should_not_delete_unknown(resource: RestResource) -> None:
+    unknown_id = uuid4()
+
+    (
+        resource.delete_one()
+        .with_id(unknown_id)
+        .ensure()
+        .fail()
+        .with_code(404)
+        .and_message(f"An apple with id<{unknown_id}> does not exist.")
+    )

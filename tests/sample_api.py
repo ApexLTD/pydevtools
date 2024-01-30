@@ -128,3 +128,8 @@ def read_all(
 @apple_api.patch("/{apple_id}", response_model=Response[NoData])
 def patch(apple_id: UUID) -> BadRequest:
     return BadRequest(message=f"Patching <{apple_id}> is not allowed")
+
+
+@apple_api.delete("/{apple_id}", response_model=Response[NoData])
+def delete(apple_id: UUID) -> ResourceNotFound:
+    return ResourceNotFound(message=f"An apple with id<{apple_id}> does not exist.")
